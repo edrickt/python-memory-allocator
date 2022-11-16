@@ -48,5 +48,5 @@ class MemoryAllocator:
         if (totalSize / 4) + len(self.heap.heap) <= MAX_SIZE:
             self.heap.extend_heap(sizeByte)
         else:
-            print("memheap.py: total heap capacity reached! (100000 words)")
+            print("memheap.py: total heap capacity reached (maximum 100000 words)")
             sys.exit(1)
