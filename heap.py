@@ -26,11 +26,10 @@ class Heap:
             heapItem.update_total_size_by_payload()
             heapItem.update_footer_index()
             self.heap[heapItem.footerIndex-1] = HeapItem()
+        elif freeblock.totalSize == 0:
+            freeblock.inuse = False
         else:
-            if freeblock.totalSize != 0:
-                self.heap[freeblock.headerIndex] = self.heap[freeblock.footerIndex] = freeblock
-            else:
-                freeblock.inuse = False
+            self.heap[freeblock.headerIndex] = self.heap[freeblock.footerIndex] = freeblock
 
         self.insert_heap_item(heapItem)
 
