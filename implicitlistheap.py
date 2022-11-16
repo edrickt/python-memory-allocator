@@ -4,6 +4,8 @@ from copy import deepcopy
 INITIAL_SIZE = 8
 MAX_SIZE = 100000
 INT_MAX = 999999999
+IMPLICIT = "implicit"
+EXPLICIT = "explicit"
 FIRST_FIT = "first fit"
 BEST_FIT = "best fit"
 

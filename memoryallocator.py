@@ -6,12 +6,15 @@ import sys
 INITIAL_SIZE = 8
 MAX_SIZE = 100000
 INT_MAX = 999999999
+IMPLICIT = "implicit"
+EXPLICIT = "explicit"
 FIRST_FIT = "first fit"
 BEST_FIT = "best fit"
 
 class MemoryAllocator:
-    def __init__(self, fitType):
-        self.heap = ImplicitListHeap(fitType)
+    def __init__(self, listType, fitType):
+        if listType == IMPLICIT:
+            self.heap = ImplicitListHeap(fitType)
 
     def myalloc(self, sizeByte):
         itemToInsert = HeapItem(payloadSize=sizeByte, allocated=1, inuse=True)
