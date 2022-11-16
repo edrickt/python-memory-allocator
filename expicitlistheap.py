@@ -47,8 +47,9 @@ class ExplicitListHip(Heap):
         self.itemCounter += 1
 
         self.heap[headerIndex] = self.heap[footerIndex] = heapItem
+        # Dont need to do these two
+        # Need to update freeblock pointers before and after
         self.set_item_prev_next(heapItem)
-
         self.update_adjacent_heap_item_pointers(heapItem)
 
     def set_item_prev_next(self, heapItem):
