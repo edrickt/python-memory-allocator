@@ -1,20 +1,16 @@
 from heapitem import HeapItem
 from copy import deepcopy
 
-INITIAL_SIZE = 8
-MAX_SIZE = 100000
 INT_MAX = 999999999
-IMPLICIT = "implicit"
-EXPLICIT = "explicit"
 FIRST_FIT = "first fit"
 BEST_FIT = "best fit"
 
 class ImplicitListHeap:
-    def __init__(self, fitType):
+    def __init__(self, fitType, initialSize):
         self.fitType = fitType
-        self.heap = [HeapItem()] * INITIAL_SIZE
+        self.heap = [HeapItem()] * initialSize
         self.itemCounter = 1
-        initialFreeblock = HeapItem(payloadSize=(INITIAL_SIZE-6)*4, allocated=0, inuse=True, headerIndex=1, footerIndex=len(self.heap)-2, name=0)
+        initialFreeblock = HeapItem(payloadSize=(initialSize-6)*4, allocated=0, inuse=True, headerIndex=1, footerIndex=len(self.heap)-2, name=0)
         self.insert_heap_item(initialFreeblock)
         self.root = self.heap[1]
 
