@@ -44,7 +44,7 @@ class Heap:
         self.heap[headerIndex] = self.heap[footerIndex] = heapItem
         self.set_item_prev_next(heapItem)
 
-        self.update_adjacent_heapItem_pointers(heapItem)
+        self.update_adjacent_heap_item_pointers(heapItem)
 
     def set_item_prev_next(self, heapItem):
         heapItem.next = self.next_adjacent_block(heapItem)
@@ -66,7 +66,7 @@ class Heap:
             self.root = heapItem
         return None
 
-    def update_adjacent_heapItem_pointers(self, heapItem):
+    def update_adjacent_heap_item_pointers(self, heapItem):
         if heapItem.prev is not None:
             prevItem = heapItem.prev
             prevItem.next = heapItem
