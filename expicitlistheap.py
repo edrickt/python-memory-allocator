@@ -111,13 +111,11 @@ class ExplicitListHip(Heap):
         return None
 
     def find_block(self, pointer):
-        name = pointer.name
-        curItem = self.root
-        while curItem is not None:
-            if curItem.name == name and curItem.inuse is True and curItem.allocated == 1:
+        for i in range(0, len(self.heap)):
+            curItem = self.heap[i]
+            if pointer.name == curItem.name and curItem.inuse is True:
                 return curItem
-            curItem = curItem.next
-        return None
+        return False
 
     def coalesce(self, pointer):
         prevBlock = pointer.prev
