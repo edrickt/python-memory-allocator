@@ -27,7 +27,10 @@ class Heap:
             heapItem.update_footer_index()
             self.heap[heapItem.footerIndex-1] = HeapItem()
         else:
-            self.heap[freeblock.headerIndex] = self.heap[freeblock.footerIndex] = freeblock
+            if freeblock.totalSize != 0:
+                self.heap[freeblock.headerIndex] = self.heap[freeblock.footerIndex] = freeblock
+            else:
+                freeblock.inuse = False
 
         self.insert_heap_item(heapItem)
 
