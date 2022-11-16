@@ -115,7 +115,7 @@ class ExplicitListHip(Heap):
             curItem = self.heap[i]
             if pointer.name == curItem.name and curItem.inuse is True:
                 return curItem
-        return False
+        return None
 
     def coalesce(self, pointer):
         prevBlock = pointer.prev
