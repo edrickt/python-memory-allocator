@@ -1,5 +1,6 @@
 # reference: https://docs.python.org/3/library/copy.html
 from implicitlistheap import ImplicitListHeap
+from explicitlistheap import ExplicitListHeap
 from heapitem import HeapItem
 import sys
 
@@ -15,7 +16,7 @@ class MemoryAllocator:
         if listType == IMPLICIT:
             self.heap = ImplicitListHeap(fitType, INITIAL_SIZE)
         elif listType == EXPLICIT:
-            pass
+            self.heap = ExplicitListHeap(fitType, INITIAL_SIZE)
 
     def myalloc(self, sizeByte):
         itemToInsert = HeapItem(payloadSize=sizeByte, allocated=1, inuse=True)
