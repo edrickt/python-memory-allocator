@@ -1,4 +1,6 @@
 from heap import Heap
+from heapitem import HeapItem
+from copy import deepcopy
 
 INT_MAX = 999999999
 FIRST_FIT = "first fit"
