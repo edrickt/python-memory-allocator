@@ -5,6 +5,7 @@ class HeapItem:
         self.inuse = inuse
         self.headerIndex = headerIndex
         self.footerIndex = footerIndex
+        self.name = name
         self.prev = prev
         self.next = next
 
