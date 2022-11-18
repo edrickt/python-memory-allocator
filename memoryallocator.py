@@ -4,7 +4,7 @@ from explicitlistheap import ExplicitListHeap
 from heapitem import HeapItem
 import sys
 
-INITIAL_SIZE = 26
+INITIAL_SIZE = 8
 MAX_SIZE = 100000
 IMPLICIT = "implicit"
 EXPLICIT = "explicit"
