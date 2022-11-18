@@ -39,38 +39,6 @@ class ExplicitListHeap(Heap):
 
         self.heap[headerIndex] = self.heap[footerIndex] = heapItem
 
-    #     self.set_item_prev_next(heapItem)
-
-    #     self.update_adjacent_heap_item_pointers(heapItem)
-
-    # def set_item_prev_next(self, heapItem):
-    #     heapItem.next = self.next_adjacent_block(heapItem)
-    #     heapItem.prev = self.prev_adjacent_block(heapItem)
-
-    # def update_adjacent_heap_item_pointers(self, heapItem):
-    #     if heapItem.prev is not None:
-    #         prevItem = heapItem.prev
-    #         prevItem.next = heapItem
-    #     if heapItem.next is not None:
-    #         nextItem = heapItem.next
-    #         nextItem.prev = heapItem
-
-    # def next_adjacent_block(self, heapItem):
-    #     for i in range(heapItem.footerIndex+1, len(self.heap)-2):
-    #         if self.heap[i].inuse is True and self.heap[i].name != heapItem.name:
-    #             return self.heap[i]
-    #     return None
-
-    # def prev_adjacent_block(self, heapItem):
-    #     root = True
-    #     for i in range(heapItem.headerIndex-1, 1, -1):
-    #         root = False
-    #         if self.heap[i].inuse is True and self.heap[i].name != heapItem.name:
-    #             return self.heap[i]
-    #     if root is True:
-    #         self.root = heapItem
-    #     return None
-
     def find_freeblock(self, sizeByte):
         if self.fitType == FIRST_FIT:
             return self.find_freeblock_first_fit(sizeByte)
