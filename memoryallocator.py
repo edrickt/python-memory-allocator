@@ -4,7 +4,7 @@ from explicitlistheap import ExplicitListHeap
 from heapitem import HeapItem
 import sys
 
-INITIAL_SIZE = 1000
+INITIAL_SIZE = 26
 MAX_SIZE = 100000
 IMPLICIT = "implicit"
 EXPLICIT = "explicit"
@@ -45,7 +45,7 @@ class MemoryAllocator:
         return None
 
     def mysbrk(self, sizeByte):
-        totalSize = (sizeByte // 8 + 1) * 8 + 8
+        totalSize = HeapItem.calculate_total_size(sizeByte)
         if (totalSize / 4) + len(self.heap.heap) <= MAX_SIZE:
             self.heap.extend_heap(sizeByte)
         else:

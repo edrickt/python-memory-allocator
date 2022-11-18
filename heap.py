@@ -82,7 +82,7 @@ class Heap:
             
     def find_freeblock_first_fit(self, sizeByte):
         curItem = self.root
-        totalSize = (sizeByte // 8 + 1) * 8 + 8
+        totalSize = HeapItem.calculate_total_size(sizeByte)
         if self.fitType == FIRST_FIT:
             while curItem is not None:
                 if curItem.allocated == 0 and curItem.inuse == True and curItem.totalSize >= totalSize:
@@ -92,7 +92,7 @@ class Heap:
 
     def find_freeblock_best_fit(self, sizeByte):
         curItem = self.root
-        totalSize = (sizeByte // 8 + 1) * 8 + 8
+        totalSize = HeapItem.calculate_total_size(sizeByte)
         min = INT_MAX
         found = None
         while curItem is not None:
@@ -171,7 +171,7 @@ class Heap:
             j += 1
 
     def extend_heap(self, sizeByte):
-        totalSize = (sizeByte // 8 + 1) * 8 + 8
+        totalSize = HeapItem.calculate_total_size(sizeByte)
         heapExtension = [HeapItem()] * int((totalSize/4)+1)
         headerIndex = len(self.heap)-1
         self.heap.pop()

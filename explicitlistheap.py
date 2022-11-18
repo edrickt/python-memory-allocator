@@ -20,6 +20,12 @@ class ExplicitListHeap(Heap):
 
         self.heap[headerIndex] = self.heap[footerIndex] = heapItem
 
+    # def write_pointers(self, heapItem):
+    # if heapItem.allocated == 0:
+    #     self.heap[heapItem.headerIndex+1] = heapItem.prev.headerIndex
+    #     self.heap[heapItem.headerIndex+2] = heapItem.next.headerIndex
+    # else:
+    #     if self.heap[heapItem.headerIndex+1] 
     # idea: create write pointer function, just write integer or something
     # similar: 
 
@@ -84,8 +90,8 @@ class ExplicitListHeap(Heap):
         blockB.allocated = 0
         blockB.update_total_size_by_headers()
         self.paste_contents(blockB.headerIndex+1, blockB.footerIndex-1, contents)
-        self.insert_heap_item(blockB)
         self.push_freeblock_to_freelist(blockA, blockB)
+        self.insert_heap_item(blockB)
 
     def push_freeblock_to_freelist(self, blockA, blockB):
         self.delete_freeblock(blockA)
@@ -119,7 +125,7 @@ class ExplicitListHeap(Heap):
             nextBlock.prev = prevBlock
 
     def extend_heap(self, sizeByte):
-        totalSize = (sizeByte // 8 + 1) * 8 + 8
+        totalSize = HeapItem.calculate_total_size(sizeByte)
         heapExtension = [HeapItem()] * int((totalSize/4)+1)
         headerIndex = len(self.heap)-1
         self.heap.pop()
@@ -127,10 +133,12 @@ class ExplicitListHeap(Heap):
         newFreeblock = HeapItem(payloadSize=sizeByte, 
                                 allocated=0, 
                                 inuse=True, 
-                                headerIndex=headerIndex)
+                                headerIndex=headerIndex,
+                                name=self.itemCounter)
+        self.itemCounter += 1
         newFreeblock.update_footer_index()
-        self.insert_heap_item(newFreeblock)
         self.push_freeblock(newFreeblock)
+        self.insert_heap_item(newFreeblock)
 
     def print_heap(self):
         print(f"{0},", "0x00000000")

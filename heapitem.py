@@ -31,3 +31,8 @@ class HeapItem:
     def update_total_size_by_headers(self):
         words = self.footerIndex - self.headerIndex + 1
         self.totalSize = int(words * 4)
+
+    @staticmethod
+    def calculate_total_size(sizeByte):
+        totalSize = ((sizeByte + 8 - 1) // 8 * 8) + 8
+        return int(totalSize)
