@@ -10,25 +10,6 @@ class ExplicitListHeap(Heap):
     def __init__(self, fitType, initialSize):
         super().__init__(fitType, initialSize)
 
-    def insert_into_freeblock(self, heapItem, freeblock):
-        heapItem.headerIndex = freeblock.headerIndex
-        heapItem.update_footer_index()
-
-        freeblock.headerIndex = heapItem.footerIndex+1
-        freeblock.update_total_size_by_headers()
-
-        if freeblock.totalSize == 8:
-            heapItem.payloadSize = int(((heapItem.totalSize-3)/4)*4)
-            heapItem.update_total_size_by_payload()
-            heapItem.update_footer_index()
-            self.heap[heapItem.footerIndex-1] = HeapItem()
-        elif freeblock.totalSize == 0:
-            freeblock.inuse = False
-        else:
-            self.heap[freeblock.headerIndex] = self.heap[freeblock.footerIndex] = freeblock
-
-        self.insert_heap_item(heapItem)
-
     def insert_heap_item(self, heapItem):
         headerIndex = heapItem.headerIndex
         footerIndex = heapItem.footerIndex
@@ -38,44 +19,6 @@ class ExplicitListHeap(Heap):
         self.itemCounter += 1
 
         self.heap[headerIndex] = self.heap[footerIndex] = heapItem
-
-    def find_freeblock(self, sizeByte):
-        if self.fitType == FIRST_FIT:
-            return self.find_freeblock_first_fit(sizeByte)
-        elif self.fitType == BEST_FIT:
-            return self.find_freeblock_best_fit(sizeByte)
-            
-    def find_freeblock_first_fit(self, sizeByte):
-        curItem = self.root
-        totalSize = (sizeByte // 8 + 1) * 8 + 8
-        if self.fitType == FIRST_FIT:
-            while curItem is not None:
-                if curItem.allocated == 0 and curItem.inuse == True and curItem.totalSize >= totalSize:
-                    return curItem
-                curItem = curItem.next
-            return None
-
-    def find_freeblock_best_fit(self, sizeByte):
-        curItem = self.root
-        totalSize = (sizeByte // 8 + 1) * 8 + 8
-        min = INT_MAX
-        found = None
-        while curItem is not None:
-            if curItem.allocated == 0 and curItem.inuse == True and curItem.totalSize >= totalSize:
-                if min > curItem.totalSize:
-                    min = curItem.totalSize
-                    found = curItem
-            curItem = curItem.next
-        if found is not None:
-            return found
-        return None
-
-    def find_block(self, pointer):
-        for i in range(1, len(self.heap)-2):
-            curItem = self.heap[i]
-            if pointer.name == curItem.name and curItem.inuse is True:
-                return curItem
-        return None
 
     def prev_adjacent_block(self, heapItem):
         for i in range(heapItem.headerIndex-1, 1, -1):
@@ -117,7 +60,6 @@ class ExplicitListHeap(Heap):
                     self.combine_adjacent_freeblocks(prevBlock, pointer)
                     return
             elif prevBlock is None and nextBlock is None:
-                pointer.allocated = 0
                 self.push_freeblock(pointer)
                 return
 
@@ -161,20 +103,6 @@ class ExplicitListHeap(Heap):
         if nextBlock is not None:
             nextBlock.prev = prevBlock
 
-    def copy_contents(self, indexA, indexB):
-        contents = []
-        for i in range(indexA, indexB+1):
-            copy = deepcopy(self.heap[i])
-            copy.inuse = False
-            contents.append(copy)
-        return contents
-
-    def paste_contents(self, indexA, indexB, contents):
-        j = 0
-        for i in range(indexA, indexB+1):
-            self.heap[i] = contents[j]
-            j += 1
-
     def extend_heap(self, sizeByte):
         totalSize = (sizeByte // 8 + 1) * 8 + 8
         heapExtension = [HeapItem()] * int((totalSize/4)+1)
@@ -190,10 +118,12 @@ class ExplicitListHeap(Heap):
         self.insert_block_at_root(newFreeblock)
 
     def print_heap(self):
-        for i in range(0, len(self.heap)):
+        print(f"{0},", "0x00000000")
+        for i in range(1, len(self.heap)-1):
             heapItem = self.heap[i]
             content = heapItem.headerfooter()
             if heapItem.headerfooter() == 0:
                 print(f"{i},")
             else:
                 print(f"{i}, 0x{content:0{8}X}")
+        print(f"{len(self.heap)-1},", "0x00000000")
