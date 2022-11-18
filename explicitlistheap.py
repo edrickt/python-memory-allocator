@@ -27,9 +27,9 @@ class ExplicitListHeap(Heap):
         else:
             self.heap[freeblock.headerIndex] = self.heap[freeblock.footerIndex] = freeblock
 
-        self.insert_heap_item(heapItem, freeblock)
+        self.insert_heap_item(heapItem)
 
-    def insert_heap_item(self, heapItem, freeblock):
+    def insert_heap_item(self, heapItem):
         headerIndex = heapItem.headerIndex
         footerIndex = heapItem.footerIndex
 
@@ -38,20 +38,45 @@ class ExplicitListHeap(Heap):
         self.itemCounter += 1
 
         self.heap[headerIndex] = self.heap[footerIndex] = heapItem
-        self.insert_item_at_root(freeblock)
 
-    def insert_item_at_root(self, heapItem):
-        pass
+    #     self.set_item_prev_next(heapItem)
+
+    #     self.update_adjacent_heap_item_pointers(heapItem)
+
+    # def set_item_prev_next(self, heapItem):
+    #     heapItem.next = self.next_adjacent_block(heapItem)
+    #     heapItem.prev = self.prev_adjacent_block(heapItem)
+
+    # def update_adjacent_heap_item_pointers(self, heapItem):
+    #     if heapItem.prev is not None:
+    #         prevItem = heapItem.prev
+    #         prevItem.next = heapItem
+    #     if heapItem.next is not None:
+    #         nextItem = heapItem.next
+    #         nextItem.prev = heapItem
+
+    # def next_adjacent_block(self, heapItem):
+    #     for i in range(heapItem.footerIndex+1, len(self.heap)-2):
+    #         if self.heap[i].inuse is True and self.heap[i].name != heapItem.name:
+    #             return self.heap[i]
+    #     return None
+
+    # def prev_adjacent_block(self, heapItem):
+    #     root = True
+    #     for i in range(heapItem.headerIndex-1, 1, -1):
+    #         root = False
+    #         if self.heap[i].inuse is True and self.heap[i].name != heapItem.name:
+    #             return self.heap[i]
+    #     if root is True:
+    #         self.root = heapItem
+    #     return None
 
     def find_freeblock(self, sizeByte):
         if self.fitType == FIRST_FIT:
             return self.find_freeblock_first_fit(sizeByte)
         elif self.fitType == BEST_FIT:
             return self.find_freeblock_best_fit(sizeByte)
-
-# stop notes: find freeblocks shouldnt need to be changed since they
-# iterate from root of only freeblock list only.
-
+            
     def find_freeblock_first_fit(self, sizeByte):
         curItem = self.root
         totalSize = (sizeByte // 8 + 1) * 8 + 8
@@ -78,20 +103,27 @@ class ExplicitListHeap(Heap):
         return None
 
     def find_block(self, pointer):
-        for i in range(0, len(self.heap)):
+        for i in range(1, len(self.heap)-2):
             curItem = self.heap[i]
             if pointer.name == curItem.name and curItem.inuse is True:
                 return curItem
         return None
 
-# stop note: case 1 will need to insert the freeblock at root
+    def prev_adjacent_block(self, heapItem):
+        for i in range(heapItem.headerIndex-1, 1, -1):
+            root = False
+            if self.heap[i].inuse is True and self.heap[i].name != heapItem.name:
+                return self.heap[i]
+        return None
+
     def coalesce(self, pointer):
-        prevBlock = pointer.prev
-        nextBlock = pointer.next
+        prevBlock = self.prev_adjacent_block(pointer)
+        nextBlock = self.next_adjacent_block(pointer)
 
         if prevBlock is not None and nextBlock is not None:
             if prevBlock.allocated == 1 and nextBlock.allocated == 1:
                 pointer.allocated = 0
+                self.insert_block_at_root(pointer)
                 return
             elif prevBlock.allocated == 1 and nextBlock.allocated == 0:
                 self.combine_adjacent_freeblocks(pointer, nextBlock)
@@ -106,6 +138,7 @@ class ExplicitListHeap(Heap):
             if prevBlock is None and nextBlock is not None:
                 if nextBlock.allocated == 1:
                     pointer.allocated = 0
+                    self.insert_block_at_root(pointer)
                     return
                 elif nextBlock.allocated == 0:
                     self.combine_adjacent_freeblocks(pointer, nextBlock)
@@ -113,15 +146,16 @@ class ExplicitListHeap(Heap):
             elif prevBlock is not None and nextBlock is None:
                 if prevBlock.allocated == 1:
                     pointer.allocated = 0
+                    self.insert_block_at_root(pointer)
                     return
                 elif prevBlock.allocated == 0:
                     self.combine_adjacent_freeblocks(prevBlock, pointer)
                     return
             elif prevBlock is None and nextBlock is None:
                 pointer.allocated = 0
+                self.insert_block_at_root(pointer)
                 return
 
-# stop note: will need to insert the freeblock at root
     def combine_adjacent_freeblocks(self, blockA, blockB):
         contents = self.copy_contents(blockA.headerIndex+1, blockB.footerIndex-1)
         blockB.headerIndex = blockA.headerIndex
@@ -129,6 +163,44 @@ class ExplicitListHeap(Heap):
         blockB.update_total_size_by_headers()
         self.paste_contents(blockB.headerIndex+1, blockB.footerIndex-1, contents)
         self.insert_heap_item(blockB)
+        self.push_freeblock_to_freelist(blockA, blockB)
+        # self.remove_freeblock_from_list(blockA)
+        # self.insert_block_at_root(blockB)
+
+    def push_freeblock_to_freelist(self, blockA, blockB):
+        self.delete_freeblock(blockA)
+        self.delete_freeblock(blockB)
+        self.push_freeblock(blockB)
+
+    def delete_freeblock(self, block):
+        if self.root is None or block is None:
+            return
+        if self.root == block:
+            self.root = block.next
+        if block.next is not None:
+            block.next.prev = block.next
+
+    def push_freeblock(self, block):
+        block.prev = None
+        block.next = self.root
+        if self.root is not None:
+            self.root.prev = block
+        self.root = block
+
+    def remove_freeblock_from_list(self, blockA):
+        prevBlock = blockA.prev
+        nextBlock = blockA.next
+        if prevBlock is not None:
+            prevBlock.next = nextBlock
+        if nextBlock is not None:
+            nextBlock.prev = prevBlock
+
+    def insert_block_at_root(self, block):
+        temp = self.root
+        self.root = block
+        block.prev = None
+        block.next = temp
+        temp.prev = block
 
     def copy_contents(self, indexA, indexB):
         contents = []
@@ -144,7 +216,6 @@ class ExplicitListHeap(Heap):
             self.heap[i] = contents[j]
             j += 1
 
-# stop note: may need to step through inserting heap item of freeblock
     def extend_heap(self, sizeByte):
         totalSize = (sizeByte // 8 + 1) * 8 + 8
         heapExtension = [HeapItem()] * int((totalSize/4)+1)
@@ -157,6 +228,7 @@ class ExplicitListHeap(Heap):
                                 headerIndex=headerIndex)
         newFreeblock.update_footer_index()
         self.insert_heap_item(newFreeblock)
+        self.insert_block_at_root(newFreeblock)
 
     def print_heap(self):
         for i in range(0, len(self.heap)):
