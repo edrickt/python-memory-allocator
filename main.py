@@ -2,7 +2,7 @@ from memoryallocator import MemoryAllocator, FIRST_FIT, BEST_FIT, IMPLICIT, EXPL
 
 if __name__ == "__main__":
     heap = MemoryAllocator(EXPLICIT, FIRST_FIT)
-    p0 = heap.myalloc(1)
+    p0 = heap.myalloc(1000)
     heap.myfree(p0)
     p1 = heap.myalloc(1)
     p2 = heap.myalloc(1)
