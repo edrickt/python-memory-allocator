@@ -18,10 +18,22 @@ class ExplicitListHeap(Heap):
         heapItem.name = self.itemCounter
         self.itemCounter += 1
 
-# idea to print pointers: create new dataclass that are dataclass pointers and
-# insert into indexes after header. will make it easier to print
-
         self.heap[headerIndex] = self.heap[footerIndex] = heapItem
+
+    # idea: create write pointer function, just write integer or something
+    # similar: 
+
+    # def write_headerfooter(self, pointer):
+    #     self.heap[pointer.headerIndex] = self.heap[pointer.footerIndex] = pointer.totalSizeByte | pointer.allocated
+    #     if pointer.allocated == 0:
+    #         self.set_prev_next_pointers(pointer)
+    #         self.heap[pointer.headerIndex+1] = pointer.prev
+    #         self.heap[pointer.headerIndex+2] = pointer.next
+    #     else:
+    #         if self.heap[pointer.headerIndex+1] is None:
+    #             self.heap[pointer.headerIndex+1] = 0
+    #         if self.heap[pointer.headerIndex+2] is None:
+    #             self.heap[pointer.headerIndex+2] = 0
 
     def prev_adjacent_block(self, heapItem):
         for i in range(heapItem.headerIndex-1, 1, -1):
