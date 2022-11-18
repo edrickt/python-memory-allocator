@@ -108,8 +108,9 @@ class Heap:
     def find_block(self, pointer):
         for i in range(1, len(self.heap)-2):
             curItem = self.heap[i]
-            if pointer.name == curItem.name and curItem.inuse is True:
-                return curItem
+            if isinstance(curItem, HeapItem) is True:
+                if pointer.name == curItem.name and curItem.inuse is True:
+                    return curItem
         return None
 
     def coalesce(self, pointer):
@@ -160,7 +161,8 @@ class Heap:
         contents = []
         for i in range(indexA, indexB+1):
             copy = deepcopy(self.heap[i])
-            copy.inuse = False
+            if isinstance(copy, HeapItem):
+                copy.inuse = False
             contents.append(copy)
         return contents
 

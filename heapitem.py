@@ -14,7 +14,7 @@ class HeapItem:
     def update_total_size_by_payload(self):
         if self.payloadSize == 0:
             return 0
-        totalSize = ((self.payloadSize + 8 - 1) // 8 * 8) + 8
+        totalSize = HeapItem.calculate_total_size(self.payloadSize)
         self.totalSize = totalSize
         return int(totalSize)
 

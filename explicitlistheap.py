@@ -19,13 +19,24 @@ class ExplicitListHeap(Heap):
         self.itemCounter += 1
 
         self.heap[headerIndex] = self.heap[footerIndex] = heapItem
+        #self.write_pointers(heapItem)
 
-    # def write_pointers(self, heapItem):
-    # if heapItem.allocated == 0:
-    #     self.heap[heapItem.headerIndex+1] = heapItem.prev.headerIndex
-    #     self.heap[heapItem.headerIndex+2] = heapItem.next.headerIndex
-    # else:
-    #     if self.heap[heapItem.headerIndex+1] 
+    def write_pointers(self, heapItem):
+        if heapItem.allocated == 0:
+            if heapItem.prev is not None:
+                self.heap[heapItem.headerIndex+1] = heapItem.prev.headerIndex
+            else:
+                self.heap[heapItem.headerIndex+1] = 0
+            if heapItem.next is not None:
+                self.heap[heapItem.headerIndex+2] = heapItem.next.headerIndex
+            else:
+                self.heap[heapItem.headerIndex+2] = 0
+        else:
+            if isinstance(self.heap[heapItem.headerIndex+1], int) is False:
+                self.heap[heapItem.headerIndex+1] = 0
+            if isinstance(self.heap[heapItem.headerIndex+2], int) is False:
+                self.heap[heapItem.headerIndex+2] = 0
+
     # idea: create write pointer function, just write integer or something
     # similar: 
 
