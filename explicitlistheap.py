@@ -164,9 +164,17 @@ class ExplicitListHeap(Heap):
         print(f"{0},", "0x00000000")
         for i in range(1, len(self.heap)-1):
             heapItem = self.heap[i]
-            content = heapItem
-            if heapItem.headerfooter() == 0:
-                print(f"{i},")
+            if isinstance(heapItem, HeapItem):
+                content = heapItem.headerfooter()
+                if content == 0:
+                    print(f"{i},")
+                else:
+                    print(f"{i}, 0x{content:0{8}X}")
             else:
-                print(f"{i}, 0x{content:0{8}X}")
+                print(f"{i}, 0x{heapItem:0{8}X}")
+            # content = heapItem.headerfooter()
+            # if content == 0:
+            #     print(f"{i},")
+            # else:
+            #     print(f"{i}, 0x{content:0{8}X}")
         print(f"{len(self.heap)-1},", "0x00000000")

@@ -189,7 +189,7 @@ class Heap:
         for i in range(0, len(self.heap)):
             heapItem = self.heap[i]
             content = heapItem.headerfooter()
-            if heapItem.headerfooter() == 0:
+            if content == 0:
                 print(f"{i},")
             else:
                 print(f"{i}, 0x{content:0{8}X}")
