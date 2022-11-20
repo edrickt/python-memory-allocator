@@ -62,21 +62,6 @@ class ExplicitListHeap(Heap):
                     self.heap[curBlock.headerIndex+2] = 0
             curBlock  = self.next_adjacent_block(curBlock)
 
-    # idea: create write pointer function, just write integer or something
-    # similar: 
-
-    # def write_headerfooter(self, pointer):
-    #     self.heap[pointer.headerIndex] = self.heap[pointer.footerIndex] = pointer.totalSizeByte | pointer.allocated
-    #     if pointer.allocated == 0:
-    #         self.set_prev_next_pointers(pointer)
-    #         self.heap[pointer.headerIndex+1] = pointer.prev
-    #         self.heap[pointer.headerIndex+2] = pointer.next
-    #     else:
-    #         if self.heap[pointer.headerIndex+1] is None:
-    #             self.heap[pointer.headerIndex+1] = 0
-    #         if self.heap[pointer.headerIndex+2] is None:
-    #             self.heap[pointer.headerIndex+2] = 0
-
     def prev_adjacent_block(self, heapItem):
         for i in range(heapItem.headerIndex-1, 1, -1):
             root = False
@@ -159,22 +144,3 @@ class ExplicitListHeap(Heap):
         newFreeblock.update_footer_index()
         self.push_freeblock(newFreeblock)
         self.insert_heap_item(newFreeblock)
-
-    def print_heap(self):
-        print(f"{0},", "0x00000000")
-        for i in range(1, len(self.heap)-1):
-            heapItem = self.heap[i]
-            if isinstance(heapItem, HeapItem):
-                content = heapItem.headerfooter()
-                if content == 0:
-                    print(f"{i},")
-                else:
-                    print(f"{i}, 0x{content:0{8}X}")
-            else:
-                print(f"{i}, 0x{heapItem:0{8}X}")
-            # content = heapItem.headerfooter()
-            # if content == 0:
-            #     print(f"{i},")
-            # else:
-            #     print(f"{i}, 0x{content:0{8}X}")
-        print(f"{len(self.heap)-1},", "0x00000000")
