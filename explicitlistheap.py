@@ -10,6 +10,27 @@ class ExplicitListHeap(Heap):
     def __init__(self, fitType, initialSize):
         super().__init__(fitType, initialSize)
 
+    def insert_into_freeblock(self, heapItem, freeblock):
+        heapItem.headerIndex = freeblock.headerIndex
+        heapItem.update_footer_index()
+
+        freeblock.headerIndex = heapItem.footerIndex+1
+        freeblock.update_total_size_by_headers()
+
+        if freeblock.totalSize == 8:
+            heapItem.payloadSize = int(((heapItem.totalSize-3)/4)*4)
+            heapItem.update_total_size_by_payload()
+            heapItem.update_footer_index()
+            self.heap[heapItem.footerIndex-1] = HeapItem()
+        elif freeblock.totalSize == 0:
+            freeblock.inuse = False
+            self.delete_freeblock(freeblock)
+        else:
+            self.heap[freeblock.headerIndex] = self.heap[freeblock.footerIndex] = freeblock
+
+        self.insert_heap_item(heapItem)
+        self.write_pointers()
+
     def insert_heap_item(self, heapItem):
         headerIndex = heapItem.headerIndex
         footerIndex = heapItem.footerIndex
@@ -19,23 +40,27 @@ class ExplicitListHeap(Heap):
         self.itemCounter += 1
 
         self.heap[headerIndex] = self.heap[footerIndex] = heapItem
-        #self.write_pointers(heapItem)
 
-    def write_pointers(self, heapItem):
-        if heapItem.allocated == 0:
-            if heapItem.prev is not None:
-                self.heap[heapItem.headerIndex+1] = heapItem.prev.headerIndex
-            else:
-                self.heap[heapItem.headerIndex+1] = 0
-            if heapItem.next is not None:
-                self.heap[heapItem.headerIndex+2] = heapItem.next.headerIndex
-            else:
-                self.heap[heapItem.headerIndex+2] = 0
-        else:
-            if isinstance(self.heap[heapItem.headerIndex+1], int) is False:
-                self.heap[heapItem.headerIndex+1] = 0
-            if isinstance(self.heap[heapItem.headerIndex+2], int) is False:
-                self.heap[heapItem.headerIndex+2] = 0
+    def write_pointers(self):
+        curBlock = self.heap[1]
+        while curBlock is not None:
+            prevBlock = curBlock.prev
+            nextBlock = curBlock.next
+            if curBlock.allocated == 0:
+                if prevBlock is not None:
+                    self.heap[curBlock.headerIndex+1] = prevBlock.headerIndex
+                else:
+                    self.heap[curBlock.headerIndex+1] = 0
+                if nextBlock is not None:
+                    self.heap[curBlock.headerIndex+2] = nextBlock.headerIndex
+                else:
+                    self.heap[curBlock.headerIndex+2] = 0
+            elif curBlock.allocated == 1:
+                if isinstance(self.heap[curBlock.headerIndex+1], HeapItem) is True:
+                    self.heap[curBlock.headerIndex+1] = 0
+                if isinstance(self.heap[curBlock.headerIndex+2], HeapItem) is True:
+                    self.heap[curBlock.headerIndex+2] = 0
+            curBlock  = self.next_adjacent_block(curBlock)
 
     # idea: create write pointer function, just write integer or something
     # similar: 
@@ -66,34 +91,26 @@ class ExplicitListHeap(Heap):
         if prevBlock is not None and nextBlock is not None:
             if prevBlock.allocated == 1 and nextBlock.allocated == 1:
                 self.push_freeblock(pointer)
-                return
             elif prevBlock.allocated == 1 and nextBlock.allocated == 0:
                 self.combine_adjacent_freeblocks(pointer, nextBlock)
-                return
             elif prevBlock.allocated == 0 and nextBlock.allocated == 1:
                 self.combine_adjacent_freeblocks(prevBlock, pointer)
-                return
             elif prevBlock.allocated == 0 and nextBlock.allocated == 0:
                 self.combine_adjacent_freeblocks(prevBlock, nextBlock)
-                return
         else:
             if prevBlock is None and nextBlock is not None:
                 if nextBlock.allocated == 1:
                     self.push_freeblock(pointer)
-                    return
                 elif nextBlock.allocated == 0:
                     self.combine_adjacent_freeblocks(pointer, nextBlock)
-                    return
             elif prevBlock is not None and nextBlock is None:
                 if prevBlock.allocated == 1:
                     self.push_freeblock(pointer)
-                    return
                 elif prevBlock.allocated == 0:
                     self.combine_adjacent_freeblocks(prevBlock, pointer)
-                    return
             elif prevBlock is None and nextBlock is None:
                 self.push_freeblock(pointer)
-                return
+        self.write_pointers()
 
     def combine_adjacent_freeblocks(self, blockA, blockB):
         contents = self.copy_contents(blockA.headerIndex+1, blockB.footerIndex-1)
@@ -127,14 +144,6 @@ class ExplicitListHeap(Heap):
             self.root.prev = block
         self.root = block
 
-    def remove_freeblock_from_list(self, blockA):
-        prevBlock = blockA.prev
-        nextBlock = blockA.next
-        if prevBlock is not None:
-            prevBlock.next = nextBlock
-        if nextBlock is not None:
-            nextBlock.prev = prevBlock
-
     def extend_heap(self, sizeByte):
         totalSize = HeapItem.calculate_total_size(sizeByte)
         heapExtension = [HeapItem()] * int((totalSize/4)+1)
@@ -155,7 +164,7 @@ class ExplicitListHeap(Heap):
         print(f"{0},", "0x00000000")
         for i in range(1, len(self.heap)-1):
             heapItem = self.heap[i]
-            content = heapItem.headerfooter()
+            content = heapItem
             if heapItem.headerfooter() == 0:
                 print(f"{i},")
             else:
