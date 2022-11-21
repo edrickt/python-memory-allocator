@@ -1,4 +1,5 @@
 from memoryallocator import MemoryAllocator, FIRST_FIT, BEST_FIT, IMPLICIT, EXPLICIT
+from helperfunctions import *
 
 if __name__ == "__main__":
     heap = MemoryAllocator(EXPLICIT, FIRST_FIT)
