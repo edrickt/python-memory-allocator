@@ -98,11 +98,11 @@ class ExplicitListHeap(Heap):
         self.write_pointers()
 
     def combine_adjacent_freeblocks(self, blockA, blockB):
-        contents = self.copy_contents(blockA.headerIndex+1, blockB.footerIndex-1)
+        contents = self.copy_contents(blockB)
         blockB.headerIndex = blockA.headerIndex
         blockB.allocated = 0
         blockB.update_total_size_by_headers()
-        self.paste_contents(blockB.headerIndex+1, blockB.footerIndex-1, contents)
+        self.paste_contents(contents, blockB)
         self.push_freeblock_to_freelist(blockA, blockB)
         self.insert_heap_item(blockB)
 

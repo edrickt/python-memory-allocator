@@ -86,20 +86,38 @@ class Heap:
     def combine_adjacent_freeblocks(self, blockA, blockB):
         return NotImplementedError
 
-    def copy_contents(self, indexA, indexB):
-        contents = []
-        for i in range(indexA, indexB+1):
-            copy = deepcopy(self.heap[i])
-            if isinstance(copy, HeapItem):
-                copy.inuse = False
-            contents.append(copy)
-        return contents
+    # def copy_contents(self, indexA, indexB):
+    #     contents = []
+    #     for i in range(indexA, indexB+1):
+    #         copy = deepcopy(self.heap[i])
+    #         if isinstance(copy, HeapItem):
+    #             copy.inuse = False
+    #         contents.append(copy)
+    #     return contents
 
-    def paste_contents(self, indexA, indexB, contents):
+    # def paste_contents(self, indexA, indexB, contents):
+    #     j = 0
+    #     for i in range(indexA, indexB+1):
+    #         self.heap[i] = contents[j]
+    #         j += 1
+
+    def copy_contents(self, pointer):
+        headerIndex = pointer.headerIndex
+        footerIndex = pointer.footerIndex
+        content = []
+        for i in range(headerIndex+1, footerIndex):
+            content.append(self.heap[i])
+        return content
+
+    def paste_contents(self, content, pointer):
+        headerIndex = pointer.headerIndex
+        footerIndex = pointer.footerIndex
         j = 0
-        for i in range(indexA, indexB+1):
-            self.heap[i] = contents[j]
+        for i in range(headerIndex+1, footerIndex):
+            self.heap[i] = content[j]
             j += 1
+            if j == len(content):
+                break
 
     def extend_heap(self, sizeByte):
         return NotImplementedError
