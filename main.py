@@ -7,5 +7,5 @@ if __name__ == "__main__":
     heap.myfree(p0)
     p1 = heap.myalloc(10)
     p2 = heap.myrealloc(p1, 20)
-    #heap.myfree(p2)
+    heap.myfree(p2)
     heap.heap.print_heap()

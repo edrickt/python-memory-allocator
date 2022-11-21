@@ -36,10 +36,10 @@ class MemoryAllocator:
 
     def myrealloc(self, pointer, sizeByte):
         foundBlock = self.heap.find_block(pointer)
-        content = self.heap.copy_contents(foundBlock)
+        content = self.heap.copy_contents(foundBlock.headerIndex+1, foundBlock.footerIndex-1)
         newBlock = self.myalloc(sizeByte)
         if newBlock is not None:
-            self.heap.paste_contents(content, newBlock)
+            self.heap.paste_contents(newBlock.headerIndex+1, len(content)+newBlock.headerIndex, content)
             self.myfree(foundBlock)
             return newBlock
         return None
