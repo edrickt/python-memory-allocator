@@ -104,10 +104,11 @@ class Heap:
     def extend_heap(self, sizeByte):
         return NotImplementedError
 
-    def print_heap(self):
+    def print_heap(self, num=None):
+        if num is None:
+            num = len(self.heap)-1
         print(f"{0},", "0x00000000")
-        # for i in range(1, len(self.heap)-1):
-        for i in range(1, 25):
+        for i in range(1, num):
             heapItem = self.heap[i]
             if isinstance(heapItem, HeapItem):
                 content = heapItem.headerfooter()
