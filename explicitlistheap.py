@@ -81,7 +81,8 @@ class ExplicitListHeap(Heap):
             elif prevBlock.allocated == 0 and nextBlock.allocated == 1:
                 self.combine_adjacent_freeblocks(prevBlock, pointer)
             elif prevBlock.allocated == 0 and nextBlock.allocated == 0:
-                self.combine_adjacent_freeblocks(prevBlock, nextBlock)
+                self.combine_adjacent_freeblocks(prevBlock, pointer)
+                self.combine_adjacent_freeblocks(pointer, nextBlock)
         else:
             if prevBlock is None and nextBlock is not None:
                 if nextBlock.allocated == 1:
