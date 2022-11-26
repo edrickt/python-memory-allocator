@@ -8,8 +8,8 @@ INITIAL_SIZE = 1000
 MAX_SIZE = 100000
 IMPLICIT = "implicit"
 EXPLICIT = "explicit"
-FIRST_FIT = "first fit"
-BEST_FIT = "best fit"
+FIRST_FIT = "first"
+BEST_FIT = "best"
 
 class MemoryAllocator:
     def __init__(self, listType, fitType):

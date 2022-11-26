@@ -3,8 +3,8 @@ from heapitem import HeapItem
 from copy import deepcopy
 
 INT_MAX = 999999999
-FIRST_FIT = "first fit"
-BEST_FIT = "best fit"
+FIRST_FIT = "first"
+BEST_FIT = "best"
 
 class ImplicitListHeap(Heap):
     def __init__(self, fitType, initialSize):
