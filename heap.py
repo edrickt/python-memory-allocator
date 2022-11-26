@@ -107,7 +107,7 @@ class Heap:
     def print_heap(self, num=None):
         if num is None:
             num = len(self.heap)-1
-        print(f"{0},", "0x00000000")
+        print(f"{0},", "0x00000001")
         for i in range(1, num):
             heapItem = self.heap[i]
             if isinstance(heapItem, HeapItem):
@@ -118,4 +118,4 @@ class Heap:
                     print(f"{i}, 0x{content:0{8}X}")
             else:
                 print(f"{i}, 0x{heapItem:0{8}X}")
-        print(f"{len(self.heap)-1},", "0x00000000")
+        print(f"{len(self.heap)-1},", "0x00000001")
