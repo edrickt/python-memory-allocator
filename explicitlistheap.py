@@ -22,6 +22,8 @@ class ExplicitListHeap(Heap):
             heapItem.update_total_size_by_payload()
             heapItem.update_footer_index()
             self.heap[heapItem.footerIndex-1] = HeapItem()
+            freeblock.inuse = False
+            self.delete_freeblock(freeblock)
         elif freeblock.totalSize == 0:
             freeblock.inuse = False
             self.delete_freeblock(freeblock)
