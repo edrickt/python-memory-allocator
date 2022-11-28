@@ -133,6 +133,6 @@ class Heap:
                 else:
                     string += f"{i}, 0x{content:0{8}X}\n"
             else:
-                print(f"{i}, 0x{heapItem:0{8}X}\n")
+                string += f"{i}, 0x{heapItem:0{8}X}\n"
         string += f"{len(self.heap)-1}, " + "0x00000001\n"
         return string
