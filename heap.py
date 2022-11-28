@@ -119,3 +119,20 @@ class Heap:
             else:
                 print(f"{i}, 0x{heapItem:0{8}X}")
         print(f"{len(self.heap)-1},", "0x00000001")
+
+    def get_simulation_results(self):
+        string = ""
+        num = len(self.heap)-1
+        string += f"{0}, " + "0x00000001\n"
+        for i in range(1, num):
+            heapItem = self.heap[i]
+            if isinstance(heapItem, HeapItem):
+                content = heapItem.headerfooter()
+                if content == 0:
+                    string += f"{i},\n"
+                else:
+                    string += f"{i}, 0x{content:0{8}X}\n"
+            else:
+                print(f"{i}, 0x{heapItem:0{8}X}\n")
+        string += f"{len(self.heap)-1}, " + "0x00000001\n"
+        return string

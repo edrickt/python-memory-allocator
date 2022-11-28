@@ -4,6 +4,7 @@ from helperfunctions import *
 if __name__ == "__main__":
     args = parse_args()
     # args = Arguments("out", "implicit", "first", "examples/1.in")
-    file = open_file(args.infileString)
-    memInstArr = create_meminst_array(file)
+    infile = open_file(args.infileString)
+    memInstArr = create_meminst_array(infile)
     result = simulate_dynamic_memory(memInstArr, args)
+    outfile = open(args.outfileString, "w")

@@ -13,7 +13,7 @@ def simulate_dynamic_memory(memInstArr, args):
             pointerArr.insert(inst.newName, memalloc.myrealloc(pointerArr[inst.name], inst.size))
         elif inst.instruction == "f":
             memalloc.myfree(pointerArr[inst.name])
-    memalloc.heap.print_heap(30)
+    return memalloc.heap.get_simulation_results()
 
 def parse_args():
     parser = argparse.ArgumentParser()
