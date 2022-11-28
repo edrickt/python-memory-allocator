@@ -8,3 +8,4 @@ if __name__ == "__main__":
     memInstArr = create_meminst_array(infile)
     result = simulate_dynamic_memory(memInstArr, args)
     outfile = open(args.outfileString, "w")
+    outfile.write(result)
