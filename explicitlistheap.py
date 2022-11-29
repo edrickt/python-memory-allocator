@@ -9,6 +9,7 @@ BEST_FIT = "best"
 class ExplicitListHeap(Heap):
     def __init__(self, fitType, initialSize):
         super().__init__(fitType, initialSize)
+        self.heap[2] = self.heap[3] = 0
 
     def insert_into_freeblock(self, heapItem, freeblock):
         heapItem.headerIndex = freeblock.headerIndex

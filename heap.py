@@ -10,7 +10,7 @@ class Heap:
         self.fitType = fitType
         self.heap = [HeapItem()] * initialSize
         self.itemCounter = 1
-        initialFreeblock = HeapItem(payloadSize=(initialSize-6)*4, allocated=0, inuse=True, headerIndex=1, footerIndex=len(self.heap)-2, name=0)
+        initialFreeblock = HeapItem(payloadSize=(initialSize-5)*4, allocated=0, inuse=True, headerIndex=1, footerIndex=len(self.heap)-2, name=0)
         self.insert_heap_item(initialFreeblock)
         self.root = self.heap[1]
 
