@@ -25,7 +25,6 @@ class ExplicitListHeap(Heap):
             self.heap[heapItem.footerIndex-1] = HeapItem()
             freeblock.inuse = False
             self.delete_freeblock(freeblock)
-            # why is this not committing
         elif freeblock.totalSize == 0:
             freeblock.inuse = False
             self.delete_freeblock(freeblock)
