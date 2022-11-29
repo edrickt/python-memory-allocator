@@ -23,7 +23,7 @@ def simulate_example_infiles():
             Arguments("", "explicit", "best", "")]
     for i in range(0, len(infiles)):
         if i != 8:
-            file = open_file("examples\\" + infiles[i])
+            file = open_file("examples/" + infiles[i])
             memInstArr = create_meminst_array(file)
             for j in range(0, len(args)):
                 result = simulate_dynamic_memory(memInstArr, args[j])
