@@ -58,11 +58,6 @@ class ExplicitListHeap(Heap):
                     self.heap[curBlock.headerIndex+2] = nextBlock.headerIndex
                 else:
                     self.heap[curBlock.headerIndex+2] = 0
-            elif curBlock.allocated == 1:
-                if isinstance(self.heap[curBlock.headerIndex+1], HeapItem) is True:
-                    self.heap[curBlock.headerIndex+1] = 0
-                if isinstance(self.heap[curBlock.headerIndex+2], HeapItem) is True:
-                    self.heap[curBlock.headerIndex+2] = 0
             curBlock  = self.next_adjacent_block(curBlock)
 
     def prev_adjacent_block(self, heapItem):
