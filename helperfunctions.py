@@ -27,7 +27,7 @@ def simulate_example_infiles():
             memInstArr = create_meminst_array(file)
             for j in range(0, len(args)):
                 result = simulate_dynamic_memory(memInstArr, args[j])
-                outfile = open("./results/" + str(i+1) + "." + args[j].listType + "." + args[j].fitType, "w")
+                outfile = open("./results/" + str(i+1) + "." + args[j].listType + "." + args[j].fitType + "." + "out", "w")
                 outfile.write(result)
 
 def parse_args():
