@@ -16,26 +16,19 @@ def simulate_dynamic_memory(memInstArr, args):
     return memalloc.heap.get_simulation_results()
 
 def simulate_example_infiles():
-    infiles = ["1.in", "2.in", "3.in", "4.in", "5.in", "6.in", "7.in", "8.in", "10.in", "11.in"]
+    infiles = ["1.in", "2.in", "3.in", "4.in", "5.in", "6.in", "7.in", "8.in", "9.in", "10.in", "11.in"]
+    args = [Arguments("", "implicit", "first", ""),
+            Arguments("", "implicit", "best", ""),
+            Arguments("", "explicit", "first", ""),
+            Arguments("", "explicit", "best", "")]
     for i in range(0, len(infiles)):
-        file = open_file("examples\\" + infiles[i])
-        memInstArr = create_meminst_array(file)
-        args1 = Arguments("", "implicit", "first", "")
-        args2 = Arguments("", "implicit", "best", "")
-        args3 = Arguments("", "explicit", "first", "")
-        args4 = Arguments("", "explicit", "best", "")
-        imfi = simulate_dynamic_memory(memInstArr, args1)
-        imbe = simulate_dynamic_memory(memInstArr, args2)
-        exfi = simulate_dynamic_memory(memInstArr, args3)
-        exbe = simulate_dynamic_memory(memInstArr, args4)
-        outfile1 = open("./results/" + str(i+1) + "." + args1.listType + "." + args1.fitType, "w")
-        outfile2 = open("./results/" + str(i+1) + "." + args2.listType + "." + args2.fitType, "w")
-        outfile3 = open("./results/" + str(i+1) + "." + args3.listType + "." + args3.fitType, "w")
-        outfile4 = open("./results/" + str(i+1) + "." + args4.listType + "." + args4.fitType, "w")
-        outfile1.write(imfi)
-        outfile2.write(imbe)
-        outfile3.write(exfi)
-        outfile4.write(exbe)
+        if i != 8:
+            file = open_file("examples\\" + infiles[i])
+            memInstArr = create_meminst_array(file)
+            for j in range(0, len(args)):
+                result = simulate_dynamic_memory(memInstArr, args[j])
+                outfile = open("./results/" + str(i+1) + "." + args[j].listType + "." + args[j].fitType, "w")
+                outfile.write(result)
 
 def parse_args():
     parser = argparse.ArgumentParser()
