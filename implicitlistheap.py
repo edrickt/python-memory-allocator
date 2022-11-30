@@ -56,37 +56,23 @@ class ImplicitListHeap(Heap):
         prevBlock = pointer.prev
         nextBlock = pointer.next
 
-        if prevBlock is not None and nextBlock is not None:
-            if prevBlock.allocated == 1 and nextBlock.allocated == 1:
-                pointer.allocated = 0
-                return
-            elif prevBlock.allocated == 1 and nextBlock.allocated == 0:
-                self.combine_adjacent_freeblocks(pointer, nextBlock)
-                return
-            elif prevBlock.allocated == 0 and nextBlock.allocated == 1:
-                self.combine_adjacent_freeblocks(prevBlock, pointer)
-                return
-            elif prevBlock.allocated == 0 and nextBlock.allocated == 0:
-                self.combine_adjacent_freeblocks(prevBlock, nextBlock)
-                return
-        else:
-            if prevBlock is None and nextBlock is not None:
-                if nextBlock.allocated == 1:
-                    pointer.allocated = 0
-                    return
-                elif nextBlock.allocated == 0:
-                    self.combine_adjacent_freeblocks(pointer, nextBlock)
-                    return
-            elif prevBlock is not None and nextBlock is None:
-                if prevBlock.allocated == 1:
-                    pointer.allocated = 0
-                    return
-                elif prevBlock.allocated == 0:
-                    self.combine_adjacent_freeblocks(prevBlock, pointer)
-                    return
-            elif prevBlock is None and nextBlock is None:
-                pointer.allocated = 0
-                return
+        if prevBlock is None:
+            prevBlock = HeapItem(allocated=1)
+        if nextBlock is None:
+            nextBlock = HeapItem(allocated=1)
+
+        if prevBlock.allocated == 1 and nextBlock.allocated == 1:
+            pointer.allocated = 0
+            return
+        elif prevBlock.allocated == 1 and nextBlock.allocated == 0:
+            self.combine_adjacent_freeblocks(pointer, nextBlock)
+            return
+        elif prevBlock.allocated == 0 and nextBlock.allocated == 1:
+            self.combine_adjacent_freeblocks(prevBlock, pointer)
+            return
+        elif prevBlock.allocated == 0 and nextBlock.allocated == 0:
+            self.combine_adjacent_freeblocks(prevBlock, nextBlock)
+            return
 
     def combine_adjacent_freeblocks(self, blockA, blockB):
         contents = self.copy_contents(blockA.headerIndex+1, blockB.footerIndex-1)

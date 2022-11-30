@@ -94,6 +94,7 @@ class ExplicitListHeap(Heap):
     def prev_adjacent_block(self, heapItem):
         # Iterate backwards from heapItem headerIndex
         for i in range(heapItem.headerIndex-1, 1, -1):
+            # If the heapItem is inuse and is not the same block, then return it
             if self.heap[i].inuse is True and self.heap[i].name != heapItem.name:
                 return self.heap[i]
         return None
@@ -102,31 +103,22 @@ class ExplicitListHeap(Heap):
         prevBlock = self.prev_adjacent_block(pointer)
         nextBlock = self.next_adjacent_block(pointer)
 
-        if prevBlock is not None and nextBlock is not None:
-            if prevBlock.allocated == 1 and nextBlock.allocated == 1:
-                self.push_freeblock(pointer)
-            elif prevBlock.allocated == 1 and nextBlock.allocated == 0:
-                self.combine_adjacent_freeblocks(pointer, nextBlock)
-            elif prevBlock.allocated == 0 and nextBlock.allocated == 1:
-                self.combine_adjacent_freeblocks(prevBlock, pointer)
-            elif prevBlock.allocated == 0 and nextBlock.allocated == 0:
-                self.combine_adjacent_freeblocks(prevBlock, nextBlock, True)
-                self.write_pointers()
-                self.disconnect_block(pointer, nextBlock)
-                return
-        else:
-            if prevBlock is None and nextBlock is not None:
-                if nextBlock.allocated == 1:
-                    self.push_freeblock(pointer)
-                elif nextBlock.allocated == 0:
-                    self.combine_adjacent_freeblocks(pointer, nextBlock)
-            elif prevBlock is not None and nextBlock is None:
-                if prevBlock.allocated == 1:
-                    self.push_freeblock(pointer)
-                elif prevBlock.allocated == 0:
-                    self.combine_adjacent_freeblocks(prevBlock, pointer)
-            elif prevBlock is None and nextBlock is None:
-                self.push_freeblock(pointer)
+        if prevBlock is None:
+            prevBlock = HeapItem(allocated=1)
+        if nextBlock is None:
+            nextBlock = HeapItem(allocated=1)
+
+        if prevBlock.allocated == 1 and nextBlock.allocated == 1:
+            self.push_freeblock(pointer)
+        elif prevBlock.allocated == 1 and nextBlock.allocated == 0:
+            self.combine_adjacent_freeblocks(pointer, nextBlock)
+        elif prevBlock.allocated == 0 and nextBlock.allocated == 1:
+            self.combine_adjacent_freeblocks(prevBlock, pointer)
+        elif prevBlock.allocated == 0 and nextBlock.allocated == 0:
+            self.combine_adjacent_freeblocks(prevBlock, nextBlock, True)
+            self.write_pointers()
+            self.disconnect_block(pointer, nextBlock)
+            return
         self.write_pointers()
 
     def disconnect_block(self, pointer, newBlock):
