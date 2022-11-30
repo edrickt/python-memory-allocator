@@ -76,15 +76,14 @@ class ExplicitListHeap(Heap):
         while curBlock is not None:
             prevBlock = curBlock.prev
             nextBlock = curBlock.next
-            if curBlock.allocated == 0:
-                if prevBlock is not None:
-                    self.heap[curBlock.headerIndex+1] = prevBlock.headerIndex
-                else:
-                    self.heap[curBlock.headerIndex+1] = 0
-                if nextBlock is not None:
-                    self.heap[curBlock.headerIndex+2] = nextBlock.headerIndex
-                else:
-                    self.heap[curBlock.headerIndex+2] = 0
+            if prevBlock is not None:
+                self.heap[curBlock.headerIndex+1] = prevBlock.headerIndex
+            else:
+                self.heap[curBlock.headerIndex+1] = 0
+            if nextBlock is not None:
+                self.heap[curBlock.headerIndex+2] = nextBlock.headerIndex
+            else:
+                self.heap[curBlock.headerIndex+2] = 0
             curBlock  = curBlock.next
 
     def prev_adjacent_block(self, heapItem):
