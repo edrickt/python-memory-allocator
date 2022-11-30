@@ -50,7 +50,6 @@ class Heap:
     def find_freeblock_first_fit(self, sizeByte):
         curItem = self.root
         totalSize = HeapItem.calculate_total_size(sizeByte)
-        if self.fitType == FIRST_FIT:
             while curItem is not None:
                 if curItem.allocated == 0 and curItem.inuse == True and curItem.totalSize >= totalSize:
                     return curItem
