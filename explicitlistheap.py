@@ -9,45 +9,70 @@ BEST_FIT = "best"
 # Explicit list heap class that inherits from Heap class
 class ExplicitListHeap(Heap):
     def __init__(self, fitType, initialSize):
-        # Initialize variables from parent class
+        # Initialize variables from parent class and write pointer for new
+        # first freeblock
         super().__init__(fitType, initialSize)
         self.write_pointers()
 
+    # Function to insert heapItem into freeblock
     def insert_into_freeblock(self, heapItem, freeblock):
+        # heapItem will have the headerIndex of the freeblock
         heapItem.headerIndex = freeblock.headerIndex
+        # Update the footerIndex calculated from headerIndex and size
         heapItem.update_footer_index()
 
+        # Header of freeblock will be index after footer of heapItem
         freeblock.headerIndex = heapItem.footerIndex+1
+        # Update new size of frebelock after new heapItem
         freeblock.update_total_size_by_headers()
 
+        # If the freeblock now only consists of the two pointers, make the
+        # heapItem occupy the remaining two words
         if freeblock.totalSize == 8:
+            # Update payloadSize to occupy next two blocks
             heapItem.payloadSize = int(((heapItem.totalSize-3)/4)*4)
+            # Update totalSize given new payLoad
             heapItem.update_total_size_by_payload()
+            # Update footerIndex by new payloadSize
             heapItem.update_footer_index()
+            # Remove old freeblock header
             self.heap[heapItem.footerIndex-1] = HeapItem()
+            # Set freeblock to not be inuse and delete the freeblock
             freeblock.inuse = False
             self.delete_freeblock(freeblock)
+        # If the freeblock is taken entirely up by the heapitem, delete it
         elif freeblock.totalSize == 0:
             freeblock.inuse = False
             self.delete_freeblock(freeblock)
+        # Else, add the new freeblock with new headers and footers
         else:
             self.heap[freeblock.headerIndex] = self.heap[freeblock.footerIndex] = freeblock
 
+        # Insert the heapItem at the headerIndex and footerIndex
         self.insert_heap_item(heapItem)
+        # Write the pointers for freeblocks
         self.write_pointers()
 
+    # Insert heapItem given the headerIndex and footerIndex
     def insert_heap_item(self, heapItem):
         headerIndex = heapItem.headerIndex
         footerIndex = heapItem.footerIndex
 
+        # Set the heapItem to inuse, name it given the itemCounter and
+        # increment the itemCounter
         heapItem.inuse = True
         heapItem.name = self.itemCounter
         self.itemCounter += 1
 
+        # insert into heap
         self.heap[headerIndex] = self.heap[footerIndex] = heapItem
 
+    # Write the pointers for the freeblocks
     def write_pointers(self):
+        # Set the current block to the beginning of the heap
         curBlock = self.heap[1]
+        # While not at the end of the heap items, keep iterating through them
+        # and writing pointers
         while curBlock is not None:
             prevBlock = curBlock.prev
             nextBlock = curBlock.next
