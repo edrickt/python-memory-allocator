@@ -1,15 +1,17 @@
 from heap import Heap
 from heapitem import HeapItem
-from copy import deepcopy
 
+# Constants
 INT_MAX = 999999999
 FIRST_FIT = "first"
 BEST_FIT = "best"
 
+# Explicit list heap class that inherits from Heap class
 class ExplicitListHeap(Heap):
     def __init__(self, fitType, initialSize):
+        # Initialize variables from parent class
         super().__init__(fitType, initialSize)
-        self.heap[2] = self.heap[3] = 0
+        self.write_pointers()
 
     def insert_into_freeblock(self, heapItem, freeblock):
         heapItem.headerIndex = freeblock.headerIndex
