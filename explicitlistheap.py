@@ -115,7 +115,7 @@ class ExplicitListHeap(Heap):
         elif prevBlock.allocated == 0 and nextBlock.allocated == 1:
             self.combine_adjacent_freeblocks(prevBlock, pointer)
         elif prevBlock.allocated == 0 and nextBlock.allocated == 0:
-            self.combine_adjacent_freeblocks(prevBlock, nextBlock, True)
+            self.combine_adjacent_freeblocks(prevBlock, nextBlock)
             self.write_pointers()
             self.disconnect_block(pointer, nextBlock)
             return
@@ -127,7 +127,7 @@ class ExplicitListHeap(Heap):
         self.heap[footerIndex+2] = self.heap[headerIndex+1]
         self.heap[footerIndex+3] = self.heap[headerIndex+2]
 
-    def combine_adjacent_freeblocks(self, blockA, blockB, case2=False):
+    def combine_adjacent_freeblocks(self, blockA, blockB):
         contents = self.copy_contents(blockA.headerIndex+1, blockB.footerIndex-1)
         blockB.headerIndex = blockA.headerIndex
         blockB.allocated = 0
