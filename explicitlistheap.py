@@ -76,6 +76,9 @@ class ExplicitListHeap(Heap):
         while curBlock is not None:
             prevBlock = curBlock.prev
             nextBlock = curBlock.next
+            
+            # If there is a previous freeblock, then write pointer, else write 0
+            # since there is no pointer. Do same for nextBlock
             if prevBlock is not None:
                 self.heap[curBlock.headerIndex+1] = prevBlock.headerIndex
             else:
@@ -84,11 +87,13 @@ class ExplicitListHeap(Heap):
                 self.heap[curBlock.headerIndex+2] = nextBlock.headerIndex
             else:
                 self.heap[curBlock.headerIndex+2] = 0
+
             curBlock  = curBlock.next
 
+    # Get previous adjacent block to heapItem
     def prev_adjacent_block(self, heapItem):
+        # Iterate backwards from heapItem headerIndex
         for i in range(heapItem.headerIndex-1, 1, -1):
-            root = False
             if self.heap[i].inuse is True and self.heap[i].name != heapItem.name:
                 return self.heap[i]
         return None
