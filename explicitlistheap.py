@@ -70,7 +70,7 @@ class ExplicitListHeap(Heap):
     # Write the pointers for the freeblocks
     def write_pointers(self):
         # Set the current block to the beginning of the heap
-        curBlock = self.heap[1]
+        curBlock = self.root
         # While not at the end of the heap items, keep iterating through them
         # and writing pointers
         while curBlock is not None:
@@ -85,7 +85,7 @@ class ExplicitListHeap(Heap):
                     self.heap[curBlock.headerIndex+2] = nextBlock.headerIndex
                 else:
                     self.heap[curBlock.headerIndex+2] = 0
-            curBlock  = self.next_adjacent_block(curBlock)
+            curBlock  = curBlock.next
 
     def prev_adjacent_block(self, heapItem):
         for i in range(heapItem.headerIndex-1, 1, -1):
