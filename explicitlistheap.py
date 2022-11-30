@@ -26,11 +26,11 @@ class ExplicitListHeap(Heap):
         if freeblock.totalSize == 8:
             # Update payloadSize to occupy next two blocks
             heapItem.payloadSize = int(((heapItem.totalSize-3)/4)*4)
-            # Update totalSize given new payLoad
+            # Update totalSize given new payload
             heapItem.update_total_size_by_payload()
             # Update footerIndex by new payloadSize
             heapItem.update_footer_index()
-            # Remove old freeblock header
+            # Remove old header of freeblock
             self.heap[heapItem.footerIndex-1] = HeapItem()
             # Set freeblock to not be inuse and delete the freeblock
             freeblock.inuse = False
@@ -48,7 +48,7 @@ class ExplicitListHeap(Heap):
         # Write the pointers for freeblocks
         self.write_pointers()
 
-    # Insert heapItem given the headerIndex and footerIndex
+    # Insert heapItem into heap
     def insert_heap_item(self, heapItem):
         headerIndex = heapItem.headerIndex
         footerIndex = heapItem.footerIndex
@@ -94,48 +94,69 @@ class ExplicitListHeap(Heap):
                 return self.heap[i]
         return None
 
-    def coalesce(self, pointer):
-        prevBlock = self.prev_adjacent_block(pointer)
-        nextBlock = self.next_adjacent_block(pointer)
+    # Coalesce freeblocks based on different cases
+    def coalesce(self, heapItem):
+        # Get previous and next blocks
+        prevBlock = self.prev_adjacent_block(heapItem)
+        nextBlock = self.next_adjacent_block(heapItem)
 
+        # If the previous and next blocks are none, then create a dummy HeapItem 
+        # that is allocated
         if prevBlock is None:
             prevBlock = HeapItem(allocated=1)
         if nextBlock is None:
             nextBlock = HeapItem(allocated=1)
 
+        # Determine coalescing based on different cases
+        # If prev and next blocks are allocated, push the current block as freeblock
         if prevBlock.allocated == 1 and nextBlock.allocated == 1:
-            self.push_freeblock(pointer)
+            self.push_freeblock(heapItem)
+        # If prev allocated and next not, coalesce current and next block
         elif prevBlock.allocated == 1 and nextBlock.allocated == 0:
-            self.combine_adjacent_freeblocks(pointer, nextBlock)
+            self.combine_adjacent_freeblocks(heapItem, nextBlock)
+        # if prev is not allocated and next allocated, coalesce prev and current block
         elif prevBlock.allocated == 0 and nextBlock.allocated == 1:
-            self.combine_adjacent_freeblocks(prevBlock, pointer)
+            self.combine_adjacent_freeblocks(prevBlock, heapItem)
+        # else both prev and next are not allocated, coalesce all 3
         elif prevBlock.allocated == 0 and nextBlock.allocated == 0:
             self.combine_adjacent_freeblocks(prevBlock, nextBlock)
             self.write_pointers()
-            self.disconnect_block(pointer, nextBlock)
+            self.disconnect_block(heapItem, nextBlock)
             return
         self.write_pointers()
 
-    def disconnect_block(self, pointer, newBlock):
-        footerIndex = pointer.footerIndex
+    # Pointers from old block in middle will need to be removed to simulate
+    # removal of pointers
+    def disconnect_block(self, heapItem, newBlock):
+        footerIndex = heapItem.footerIndex
         headerIndex = newBlock.headerIndex
         self.heap[footerIndex+2] = self.heap[headerIndex+1]
         self.heap[footerIndex+3] = self.heap[headerIndex+2]
 
+    # Will combine two adjacent freeblocks. Copying and pasting the content is done
+    # so that the items in the freeblock are set to unused
     def combine_adjacent_freeblocks(self, blockA, blockB):
+        # Copy the contents from blockA to blockB
         contents = self.copy_contents(blockA.headerIndex+1, blockB.footerIndex-1)
+        # Assign attributes and update totalSize
         blockB.headerIndex = blockA.headerIndex
         blockB.allocated = 0
         blockB.update_total_size_by_headers()
+        # Paste the content in the newly coalesced block
         self.paste_contents(blockB.headerIndex+1, blockB.footerIndex-1, contents)
+
+        # Push freeblock into the freelist and insert it into the heap
         self.push_freeblock_to_freelist(blockA, blockB)
         self.insert_heap_item(blockB)
 
+    # Push the freeblock into the freelist by deleting both coalesced freeblocks
+    # and then pushing the new block to the top of the stack
     def push_freeblock_to_freelist(self, blockA, blockB):
         self.delete_freeblock(blockA)
         self.delete_freeblock(blockB)
         self.push_freeblock(blockB)
 
+    # Delete freeblock from the stack
     def delete_freeblock(self, block):
         if self.root is None or block is None:
             return
@@ -146,6 +167,7 @@ class ExplicitListHeap(Heap):
         if block.prev is not None:
             block.prev.next = block.next
 
+    # Push freeblock to the front of the stack
     def push_freeblock(self, block):
         block.allocated = 0
         block.prev = None
@@ -154,18 +176,28 @@ class ExplicitListHeap(Heap):
             self.root.prev = block
         self.root = block
 
+    # Used for mysbrk to extend the heap given sizeByte
     def extend_heap(self, sizeByte):
+        # Calculate the totalSize
         totalSize = HeapItem.calculate_total_size(sizeByte)
+        # Initialize the heap extension with empty HeapItems
         heapExtension = [HeapItem()] * int((totalSize/4)+1)
+        # Set the headerIndex to be at the end of the old heap
         headerIndex = len(self.heap)-1
+
+        # Remove the placeholder on the old heap then extend it by the new heap extension
         self.heap.pop()
         self.heap.extend(heapExtension)
+        # Create a new freeblock to be put where the heap was extended
         newFreeblock = HeapItem(payloadSize=sizeByte, 
                                 allocated=0, 
                                 inuse=True, 
                                 headerIndex=headerIndex,
                                 name=self.itemCounter)
         self.itemCounter += 1
+        
+        # Update the footer index by the totalSize, push into the freeblock, insert it into the
+        # freeblock
         newFreeblock.update_footer_index()
         self.push_freeblock(newFreeblock)
         self.insert_heap_item(newFreeblock)

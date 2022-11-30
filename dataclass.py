@@ -1,5 +1,3 @@
-# Include dataclasses that are used for other classes
-
 # Holds all command line arguments
 class Arguments:
     def __init__(self, outfileString, listType, fitType, infileString):
