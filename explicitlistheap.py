@@ -1,11 +1,6 @@
 from heap import Heap
 from heapitem import HeapItem
 
-# Constants
-INT_MAX = 999999999
-FIRST_FIT = "first"
-BEST_FIT = "best"
-
 # Explicit list heap class that inherits from Heap class
 class ExplicitListHeap(Heap):
     def __init__(self, fitType, initialSize):

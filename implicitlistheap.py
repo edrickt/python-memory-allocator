@@ -2,10 +2,7 @@ from heap import Heap
 from heapitem import HeapItem
 from copy import deepcopy
 
-INT_MAX = 999999999
-FIRST_FIT = "first"
-BEST_FIT = "best"
-
+# Implicit list heap class that inherits from Heap Class
 class ImplicitListHeap(Heap):
     def __init__(self, fitType, initialSize):
         super().__init__(fitType, initialSize)
