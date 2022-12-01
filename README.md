@@ -8,7 +8,11 @@ Version: 3.9.7
 
 ## USAGE
 
+### COMMAND LINE
+
 Execution: ```$python3 memsim.py [-h] -o <outfile> -l <implicit or explicit> -f <first or best> -i <infile>```
+
+### AS A PACKAGE
 
 Simulating malloc, realloc, free, and sbrk is also possible by importing memoryallocator.py where the user is then able to perform normal memory allocation functions similar to C.
 
