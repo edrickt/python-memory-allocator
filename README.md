@@ -1,4 +1,4 @@
-# python-memory-allocator
+# Python Memory Allocator
 Malloc, free, realloc, and sbrk in Python
 
 ## PROGRAM GENERAL INFORMATION
@@ -6,9 +6,21 @@ Malloc, free, realloc, and sbrk in Python
 Language: Python
 Version: 3.9.7
 
-## COMPILATION AND EXECUTION
+## USAGE
 
 Execution: ```$python3 memsim.py [-h] -o <outfile> -l <implicit or explicit> -f <first or best> -i <infile>```
+
+Simulating malloc, realloc, free, and sbrk is also possible by importing memoryallocator.py where the user is then able to perform normal memory allocation functions similar to C.
+
+Example:
+
+```
+from memoryallocator import *
+
+memalloc = MemoryAllocator(IMPLICIT, FIRST)
+p0 = memalloc.myalloc(5)
+...
+```
 
 ## REFERENCES
 
@@ -20,7 +32,7 @@ Execution: ```$python3 memsim.py [-h] -o <outfile> -l <implicit or explicit> -f 
 ## IMPORTED LIBRARIES
 
 * from copy import deepcopy
-** Used to copy an object instead of variable assignment
+  * Used to copy an object instead of variable assignment
 
 ## ISSUES
 
